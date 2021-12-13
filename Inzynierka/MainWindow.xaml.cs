@@ -24,5 +24,25 @@ namespace Inzynierka
         {
             InitializeComponent();
         }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void StartListenning_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void StopListening_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Reset_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
