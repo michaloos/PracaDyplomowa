@@ -23,5 +23,15 @@ namespace Inzynierka
         {
             InitializeComponent();
         }
+
+        private void colorPickerFont_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+
+        }
+
+        private void colorPickerBackground_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+
+        }
     }
 }

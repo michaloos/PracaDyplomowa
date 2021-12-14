@@ -27,7 +27,8 @@ namespace Inzynierka
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.Show();
         }
 
         private void StartListenning_Click(object sender, RoutedEventArgs e)

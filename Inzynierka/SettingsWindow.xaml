@@ -3,10 +3,56 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cp="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Inzynierka"
         mc:Ignorable="d"
         Title="SettingsWindow" Height="450" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0">Wybierz język</Label>
+        <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+            <ComboBoxItem Name="englishUS">Angielski US</ComboBoxItem>
+            <ComboBoxItem Name="englishUK">Angielski UK</ComboBoxItem>
+            <ComboBoxItem Name="englishAUSIE">Angielski Austraijski</ComboBoxItem>
+            <ComboBoxItem Name="german">Niemiecki</ComboBoxItem>
+            <ComboBoxItem Name="french">Francuski</ComboBoxItem>
+            <ComboBoxItem Name="frenchCANAD">Francuski Kanadyjski</ComboBoxItem>
+            <ComboBoxItem Name="italian">Włoski</ComboBoxItem>
+            <ComboBoxItem Name="spanish">Hiszpański</ComboBoxItem>
+            <ComboBoxItem Name="portugese">Portugalski</ComboBoxItem>
+            <ComboBoxItem Name="dutch">Holenderski</ComboBoxItem>
+            <ComboBoxItem Name="chinese">Chiński</ComboBoxItem>
+        </ComboBox>
+        <Label Grid.Row="1" Grid.Column="0">Wielkość czcionki</Label>
+        <Label Grid.Row="2" Grid.Column="0">Styl czcionki</Label>
+        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+            <ComboBoxItem Name="italic">Italic</ComboBoxItem>
+            <ComboBoxItem Name="normal">Normal</ComboBoxItem>
+            <ComboBoxItem Name="oblique">Oblique</ComboBoxItem>
+        </ComboBox>
+        <Label Grid.Row="3" Grid.Column="0">Kolor czcionki</Label>
+        <cp:ColorPicker x:Name="colorPickerFont" Grid.Row="3" Grid.Column="1" DisplayColorAndName="True" SelectedColorChanged="colorPickerFont_SelectedColorChanged">
+            
+        </cp:ColorPicker>
+        <Label Grid.Row="4" Grid.Column="0">Kolor tła</Label>
+        <cp:ColorPicker x:Name="colorPickerBackground" Grid.Row="4" Grid.Column="1" DisplayColorAndName="True" SelectedColorChanged="colorPickerBackground_SelectedColorChanged">
+            
+        </cp:ColorPicker>
+        <Label Grid.Row="5" Grid.Column="0">Czas aktywności</Label>
+        <TextBlock Name="previewTextBlock" Grid.Row="3" Grid.Column="2" Grid.RowSpan="2" IsEnabled="False" Text="Przykładowy tekst.">
+            
+        </TextBlock>
     </Grid>
 </Window>
