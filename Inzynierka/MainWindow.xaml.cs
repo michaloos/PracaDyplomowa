@@ -20,20 +20,26 @@ namespace Inzynierka
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Config config;
         public MainWindow()
         {
             InitializeComponent();
+            config = Config.Instance();
+            MainTextBox.FontSize = config.getFontSize();
+            MainTextBox.FontStyle = config.getFontStyle();
+            MainTextBox.Foreground = config.getFontColor();
+            MainTextBox.Background = config.getBackgroundColor();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new SettingsWindow();
+            SettingsWindow settingsWindow = new SettingsWindow(this, config);
             settingsWindow.Show();
         }
 
         private void StartListenning_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         private void StopListening_Click(object sender, RoutedEventArgs e)
