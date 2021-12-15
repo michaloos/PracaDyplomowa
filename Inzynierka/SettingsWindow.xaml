@@ -6,11 +6,11 @@
         xmlns:cp="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Inzynierka"
         mc:Ignorable="d"
-        Title="SettingsWindow" Height="450" Width="800">
+        Title="SettingsWindow" Height="350" Width="550">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="170"/>
+            <ColumnDefinition Width="150"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -20,9 +20,10 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="0">Wybierz język</Label>
-        <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Wybierz język:</Label>
+        <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="10" Width="250">
             <ComboBoxItem Name="englishUS">Angielski US</ComboBoxItem>
             <ComboBoxItem Name="englishUK">Angielski UK</ComboBoxItem>
             <ComboBoxItem Name="englishAUSIE">Angielski Austraijski</ComboBoxItem>
@@ -35,24 +36,39 @@
             <ComboBoxItem Name="dutch">Holenderski</ComboBoxItem>
             <ComboBoxItem Name="chinese">Chiński</ComboBoxItem>
         </ComboBox>
-        <Label Grid.Row="1" Grid.Column="0">Wielkość czcionki</Label>
-        <Label Grid.Row="2" Grid.Column="0">Styl czcionki</Label>
-        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+        <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Wielkość czcionki:</Label>
+        <Slider Name="fontSizeSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Minimum="1" Maximum="40" TickFrequency="1" IsMoveToPointEnabled="True" Margin="10"
+                ValueChanged="fontSizeSlider_ValueChanged" Value="{Binding ElementName=previewTextBlock, Mode=TwoWay, Path=FontSize}" AutoToolTipPlacement="BottomRight" 
+                AutoToolTipPrecision="0" VerticalAlignment="Center">
+            
+        </Slider>
+        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Styl czcionki:</Label>
+        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" SelectionChanged="ComboBox_SelectionChanged" Margin="10" Width="250">
             <ComboBoxItem Name="italic">Italic</ComboBoxItem>
             <ComboBoxItem Name="normal">Normal</ComboBoxItem>
             <ComboBoxItem Name="oblique">Oblique</ComboBoxItem>
         </ComboBox>
-        <Label Grid.Row="3" Grid.Column="0">Kolor czcionki</Label>
-        <cp:ColorPicker x:Name="colorPickerFont" Grid.Row="3" Grid.Column="1" DisplayColorAndName="True" SelectedColorChanged="colorPickerFont_SelectedColorChanged">
+        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Kolor czcionki:</Label>
+        <cp:ColorPicker x:Name="colorPickerFont" Grid.Row="3" Grid.Column="1" DisplayColorAndName="True" SelectedColorChanged="colorPickerFont_SelectedColorChanged"
+                        Margin="10" Width="125" HorizontalContentAlignment="Center">
             
         </cp:ColorPicker>
-        <Label Grid.Row="4" Grid.Column="0">Kolor tła</Label>
-        <cp:ColorPicker x:Name="colorPickerBackground" Grid.Row="4" Grid.Column="1" DisplayColorAndName="True" SelectedColorChanged="colorPickerBackground_SelectedColorChanged">
+        <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Kolor tła:</Label>
+        <cp:ColorPicker x:Name="colorPickerBackground" Grid.Row="4" Grid.Column="1" DisplayColorAndName="True" SelectedColorChanged="colorPickerBackground_SelectedColorChanged"
+                        Margin="10" Width="125" HorizontalContentAlignment="Center">
             
         </cp:ColorPicker>
-        <Label Grid.Row="5" Grid.Column="0">Czas aktywności</Label>
-        <TextBlock Name="previewTextBlock" Grid.Row="3" Grid.Column="2" Grid.RowSpan="2" IsEnabled="False" Text="Przykładowy tekst.">
+        <Label Grid.Row="5" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Czas aktywności:</Label>
+        <TextBox Name="intTimeOut" Grid.Row="5" Grid.Column="1" PreviewTextInput="intTimeOut_PreviewTextInput" TextChanged="intTimeOut_TextChanged"
+                 Margin="10" Width="125" HorizontalContentAlignment="Center">
             
-        </TextBlock>
+        </TextBox>
+
+        <TextBox Name="previewTextBlock" Grid.Row="3" Grid.Column="2" Grid.RowSpan="2" IsEnabled="False" Text="Przykładowy tekst." Margin="5"
+                   BorderBrush="Black" BorderThickness="2">
+            
+        </TextBox>
+        <Button Name="saveChanges" Click="saveChanges_Click" Grid.Row="6" Grid.Column="2" Margin="5" Width="100" HorizontalAlignment="Left">Zapisz</Button>
+        <Button Name="cancelChanges" Click="cancelChanges_Click" Grid.Row="6" Grid.Column="2" Margin="5" Width="100" HorizontalAlignment="Right">Anuluj</Button>
     </Grid>
 </Window>
