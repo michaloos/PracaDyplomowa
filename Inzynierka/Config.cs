@@ -19,7 +19,7 @@ namespace Inzynierka
 
         private Config()
         {
-            this.language = "en";
+            this.language = "en-US_BroadbandModel";
             this.fontSize = 15;
             this.fontStyle = FontStyles.Normal;
             this.fontColor = new SolidColorBrush(Color.FromRgb(0,0,0));
