@@ -38,6 +38,7 @@ namespace Inzynierka
             intTimeOut.Text = _startConfig.getTimeOut().ToString();
             checkFontStyle();
             checkLanguage();
+            checksmartFormatting();
         }
 
         private void colorPickerFont_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
@@ -65,6 +66,7 @@ namespace Inzynierka
 
             setFontStyle();
             setLanguage();
+            setSmartFormatting();
 
             _config.setFontColor(previewTextBlock.Foreground);
             _config.setBackgroundColor(previewTextBlock.Background);
@@ -106,51 +108,75 @@ namespace Inzynierka
             e.Handled = regex.IsMatch(e.Text);
         }
 
+        private void checksmartFormatting()
+        {
+            if(englishUS.IsSelected || spanish.IsSelected)
+            {
+                smartFormattingCheckBox.IsChecked = true;
+            }
+            else
+            {
+                smartFormattingCheckBox.IsChecked = false;
+            }
+        }
+
+        private void setSmartFormatting()
+        {
+            if(smartFormattingCheckBox.IsChecked == true)
+            {
+                _config.setSmartFormatting(true);
+            }
+            else
+            {
+                _config.setSmartFormatting(false);
+            }
+        }
+
         private void setLanguage()
         {
             if (englishUS.IsSelected)
             {
-                _config.setLanguage("en-US_BroadbandModel");
+                _config.setLanguage(ModelID.englishUS);
             }
             else if (englishUK.IsSelected)
             {
-                _config.setLanguage("en-GB_BroadbandModel");
+                _config.setLanguage(ModelID.englishUK);
             }
             else if (englishAUSIE.IsSelected)
             {
-                _config.setLanguage("en-AU_BroadbandModel");
+                _config.setLanguage(ModelID.englishAUSIE);
             }
             else if (german.IsSelected)
             {
-                _config.setLanguage("de-DE_BroadbandModel");
+                _config.setLanguage(ModelID.german);
             }
             else if (french.IsSelected)
             {
-                _config.setLanguage("fr-FR_BroadbandModel");
+                _config.setLanguage(ModelID.french);
             }
             else if (frenchCANAD.IsSelected)
             {
-                _config.setLanguage("fr-CA_BroadbandModel");
+                _config.setLanguage(ModelID.frenchCANAD);
             }
             else if (italian.IsSelected)
             {
-                _config.setLanguage("it-IT_BroadbandModel");
+                _config.setLanguage(ModelID.italian);
             }
             else if (spanish.IsSelected)
             {
-                _config.setLanguage("es-ES_BroadbandModel");
+                _config.setLanguage(ModelID.spanish);
             }
             else if (portugese.IsSelected)
             {
-                _config.setLanguage("pt-BR_BroadbandModel");
+                _config.setLanguage(ModelID.portugese);
             }
             else if (dutch.IsSelected)
             {
-                _config.setLanguage("nl-NL_BroadbandModel");
+                _config.setLanguage(ModelID.dutch);
             }
             else if (chinese.IsSelected)
             {
-                _config.setLanguage("zh-CN_BroadbandModel");
+                _config.setLanguage(ModelID.chinese);
             }
         }
 
@@ -198,47 +224,47 @@ namespace Inzynierka
 
         private void checkLanguage()
         {
-            if (_config.getLanguage().Equals("en-US_BroadbandModel"))
+            if (_config.getLanguage().Equals(ModelID.englishUS))
             {
                 englishUS.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("en-GB_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.englishUK))
             {
                 englishUK.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("en-AU_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.englishAUSIE))
             {
                 englishAUSIE.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("de-DE_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.german))
             {
                 german.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("fr-FR_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.french))
             {
                 french.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("fr-CA_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.frenchCANAD))
             {
                 frenchCANAD.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("it-IT_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.italian))
             {
                 italian.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("es-ES_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.spanish))
             {
                 spanish.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("pt-BR_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.portugese))
             {
                 portugese.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("nl-NL_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.dutch))
             {
                 dutch.IsSelected = true;
             }
-            else if (_config.getLanguage().Equals("zh-CN_BroadbandModel"))
+            else if (_config.getLanguage().Equals(ModelID.chinese))
             {
                 chinese.IsSelected = true;
             }
@@ -274,6 +300,72 @@ namespace Inzynierka
             {
                 previewTextBlock.FontStyle = FontStyles.Oblique;
             }
+        }
+
+        private void englishUS_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = true;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void englishUK_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void englishAUSIE_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void german_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void french_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void frenchCANAD_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void italian_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void spanish_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = true;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void portugese_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void dutch_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void chinese_Selected(object sender, RoutedEventArgs e)
+        {
+            smartFormattingCheckBox.IsEnabled = false;
+            smartFormattingCheckBox.IsChecked = false;
         }
     }
 }

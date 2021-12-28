@@ -16,15 +16,17 @@ namespace Inzynierka
         private Brush fontColor { get; set; }
         private Brush backgroundColor { get; set; }
         private int timeOut { get; set; }
+        private bool smartFormatting { get; set; }
 
         private Config()
         {
-            this.language = "en-US_BroadbandModel";
-            this.fontSize = 15;
-            this.fontStyle = FontStyles.Normal;
-            this.fontColor = new SolidColorBrush(Color.FromRgb(0,0,0));
-            this.backgroundColor = new SolidColorBrush(Color.FromRgb(255,255,255));
-            this.timeOut = 30;
+            language = "en-US_BroadbandModel";
+            fontSize = 15;
+            fontStyle = FontStyles.Normal;
+            fontColor = new SolidColorBrush(Color.FromRgb(0,0,0));
+            backgroundColor = new SolidColorBrush(Color.FromRgb(255,255,255));
+            timeOut = 30;
+            smartFormatting = true;
         }
 
         private static Config config = new Config();
@@ -57,29 +59,37 @@ namespace Inzynierka
         {
             return timeOut;
         }
+        public bool getSmartFormatting()
+        {
+            return smartFormatting;
+        }
         public void setLanguage(string _language)
         {
-            this.language = _language;
+            language = _language;
         }
         public void setFontSize(int _fontSize)
         {
-            this.fontSize = _fontSize;
+            fontSize = _fontSize;
         }
         public void setFontStyle(FontStyle _fontStyle)
         {
-            this.fontStyle= _fontStyle;
+            fontStyle= _fontStyle;
         }
         public void setFontColor(Brush _brush)
         {
-            this.fontColor = _brush;
+            fontColor = _brush;
         }
         public void setBackgroundColor(Brush _brush)
         {
-            this.backgroundColor = _brush;
+            backgroundColor = _brush;
         }
         public void setTimeOut(int _timeOut)
         {
-            this.timeOut = _timeOut;
+            timeOut = _timeOut;
+        }
+        public void setSmartFormatting(bool _smartFormatting)
+        {
+            smartFormatting = _smartFormatting;
         }
     }
 }

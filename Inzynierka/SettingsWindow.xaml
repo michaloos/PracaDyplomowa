@@ -24,17 +24,17 @@
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Wybierz język:</Label>
         <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="10" Width="250">
-            <ComboBoxItem Name="englishUS">Angielski US</ComboBoxItem>
-            <ComboBoxItem Name="englishUK">Angielski UK</ComboBoxItem>
-            <ComboBoxItem Name="englishAUSIE">Angielski Austraijski</ComboBoxItem>
-            <ComboBoxItem Name="german">Niemiecki</ComboBoxItem>
-            <ComboBoxItem Name="french">Francuski</ComboBoxItem>
-            <ComboBoxItem Name="frenchCANAD">Francuski Kanadyjski</ComboBoxItem>
-            <ComboBoxItem Name="italian">Włoski</ComboBoxItem>
-            <ComboBoxItem Name="spanish">Hiszpański</ComboBoxItem>
-            <ComboBoxItem Name="portugese">Portugalski</ComboBoxItem>
-            <ComboBoxItem Name="dutch">Holenderski</ComboBoxItem>
-            <ComboBoxItem Name="chinese">Chiński</ComboBoxItem>
+            <ComboBoxItem Name="englishUS" Selected="englishUS_Selected">Angielski US</ComboBoxItem>
+            <ComboBoxItem Name="englishUK" Selected="englishUK_Selected">Angielski UK</ComboBoxItem>
+            <ComboBoxItem Name="englishAUSIE" Selected="englishAUSIE_Selected">Angielski Austraijski</ComboBoxItem>
+            <ComboBoxItem Name="german" Selected="german_Selected">Niemiecki</ComboBoxItem>
+            <ComboBoxItem Name="french" Selected="french_Selected">Francuski</ComboBoxItem>
+            <ComboBoxItem Name="frenchCANAD" Selected="frenchCANAD_Selected">Francuski Kanadyjski</ComboBoxItem>
+            <ComboBoxItem Name="italian" Selected="italian_Selected">Włoski</ComboBoxItem>
+            <ComboBoxItem Name="spanish" Selected="spanish_Selected">Hiszpański</ComboBoxItem>
+            <ComboBoxItem Name="portugese" Selected="portugese_Selected">Portugalski</ComboBoxItem>
+            <ComboBoxItem Name="dutch" Selected="dutch_Selected">Holenderski</ComboBoxItem>
+            <ComboBoxItem Name="chinese" Selected="chinese_Selected">Chiński</ComboBoxItem>
         </ComboBox>
         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">Wielkość czcionki:</Label>
         <Slider Name="fontSizeSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Minimum="1" Maximum="40" TickFrequency="1" IsMoveToPointEnabled="True" Margin="10"
@@ -68,6 +68,10 @@
                    BorderBrush="Black" BorderThickness="2">
             
         </TextBox>
+        <DockPanel Margin="5" Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Dostępne tylko dla Angielski US, Japońskiego i Hiszpańskiego języka.">
+            <Label>Smart Formatting: </Label>
+            <CheckBox Name="smartFormattingCheckBox" VerticalAlignment="Center"></CheckBox>
+        </DockPanel>
         <Button Name="saveChanges" Click="saveChanges_Click" Grid.Row="6" Grid.Column="2" Margin="5" Width="100" HorizontalAlignment="Left">Zapisz</Button>
         <Button Name="cancelChanges" Click="cancelChanges_Click" Grid.Row="6" Grid.Column="2" Margin="5" Width="100" HorizontalAlignment="Right">Anuluj</Button>
     </Grid>

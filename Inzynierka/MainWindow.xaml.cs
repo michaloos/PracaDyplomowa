@@ -52,7 +52,7 @@ namespace Inzynierka
 
         private void StartListenning_Click(object sender, RoutedEventArgs e)
         {
-            string outputFIle = @"../../Samples/sample" + x + ".wav";
+            string outputFIle = @"../../../Samples/sample" + x + ".wav";
             WasapiLoopbackCapture = new WasapiLoopbackCapture();
             WaveFileWriter = new WaveFileWriter(outputFIle, WasapiLoopbackCapture.WaveFormat);
 
@@ -85,11 +85,11 @@ namespace Inzynierka
                     WaveFileWriter.Dispose();
 
 
-                    WaveFileWriter = new WaveFileWriter(@"../../Samples/sample" + x + ".wav", this.WasapiLoopbackCapture.WaveFormat);
+                    WaveFileWriter = new WaveFileWriter(@"../../../Samples/sample" + x + ".wav", this.WasapiLoopbackCapture.WaveFormat);
 
                     var task = Task.Run(() =>
                     {
-                        TranscriptRecognition(@"../../Samples/sample" + (x - 1) + ".wav", speechToText);
+                        TranscriptRecognition(@"../../../Samples/sample" + (x - 1) + ".wav", speechToText);
                     });
 
                 }
@@ -154,7 +154,7 @@ namespace Inzynierka
                                 contentType: "audio/wav", //jaki typ
                                 inactivityTimeout: config.getTimeOut(), //po jakim czasie wyłącza się 
                                 model: config.getLanguage(), //jaki język (-1) dla nieskończonosci
-                                smartFormatting: true
+                                smartFormatting: config.getSmartFormatting()
                             );
                 Dispatcher.Invoke(new Action(() => 
                 { 
