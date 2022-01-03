@@ -5,13 +5,26 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Pictures\mainIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pictures\cancel.png" />
+    <None Remove="Pictures\info.jpg" />
+    <None Remove="Pictures\mainIcon.png" />
     <None Remove="Pictures\microphone.png" />
     <None Remove="Pictures\reset.png" />
+    <None Remove="Pictures\save.png" />
     <None Remove="Pictures\settings.png" />
     <None Remove="Pictures\stopRecording.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pictures\mainIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Pictures\mainIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,8 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Pictures\cancel.png" />
+    <Resource Include="Pictures\info.jpg" />
     <Resource Include="Pictures\microphone.png" />
     <Resource Include="Pictures\reset.png" />
+    <Resource Include="Pictures\save.png" />
     <Resource Include="Pictures\settings.png" />
     <Resource Include="Pictures\stopRecording.png" />
   </ItemGroup>

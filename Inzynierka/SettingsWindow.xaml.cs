@@ -39,6 +39,7 @@ namespace Inzynierka
             checkFontStyle();
             checkLanguage();
             checksmartFormatting();
+            checkTextMode();
         }
 
         private void colorPickerFont_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
@@ -46,7 +47,7 @@ namespace Inzynierka
             if (colorPickerFont.SelectedColor.HasValue)
             {
                 Color color = colorPickerFont.SelectedColor.Value;
-                Brush brush = new SolidColorBrush(Color.FromRgb(color.R, color.G, color.B));
+                Brush brush = new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B));
                 previewTextBlock.Foreground = brush;
             }
         }
@@ -56,7 +57,7 @@ namespace Inzynierka
             if (colorPickerBackground.SelectedColor.HasValue)
             {
                 Color color = colorPickerBackground.SelectedColor.Value;
-                Brush brush = new SolidColorBrush(Color.FromRgb(color.R, color.G, color.B));
+                Brush brush = new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B));
                 previewTextBlock.Background = brush;   
             }
         }
@@ -67,6 +68,7 @@ namespace Inzynierka
             setFontStyle();
             setLanguage();
             setSmartFormatting();
+            setTextMode();
 
             _config.setFontColor(previewTextBlock.Foreground);
             _config.setBackgroundColor(previewTextBlock.Background);
@@ -93,6 +95,7 @@ namespace Inzynierka
             previewTextBlock.FontSize = _startConfig.getFontSize();
             previewTextBlock.FontStyle = _startConfig.getFontStyle();
             fontSizeSlider.Value = _startConfig.getFontSize();
+            _config.setTextMode(_startConfig.getTextMode());
             Close();
         }
 
@@ -366,6 +369,40 @@ namespace Inzynierka
         {
             smartFormattingCheckBox.IsEnabled = false;
             smartFormattingCheckBox.IsChecked = false;
+        }
+
+        private void checkTextMode()
+        {
+            if(_startConfig.getTextMode() == 1)
+            {
+                allTextRadioButton.IsChecked = true;
+            }
+            else if (_startConfig.getTextMode() == 2)
+            {
+                partTextRadioButton.IsChecked = true;   
+            }
+        }
+
+        private void setTextMode()
+        {
+            if(allTextRadioButton.IsChecked == true)
+            {
+                _config.setTextMode(1);
+            }
+            else if(partTextRadioButton.IsChecked == true)
+            {
+                _config.setTextMode(2);
+            }
+        }
+
+        private void allTextRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            partTextRadioButton.IsChecked = false;
+        }
+
+        private void partTextRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            allTextRadioButton.IsChecked = false;
         }
     }
 }

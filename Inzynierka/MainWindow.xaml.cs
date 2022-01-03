@@ -33,6 +33,8 @@ namespace Inzynierka
         public int perSecond = 0;
         public int perSecondFinal = 0;
         private bool setSecondsBytes = false;
+        private SpeechToTextService speechToText;
+        private string outputFIle;
         public MainWindow()
         {
             InitializeComponent();
@@ -42,6 +44,14 @@ namespace Inzynierka
             MainTextBox.Foreground = config.getFontColor();
             MainTextBox.Background = config.getBackgroundColor();
             deleteAllSamples();
+            StopListening.IsEnabled = false;
+
+            IamAuthenticator authenticator = new IamAuthenticator(apikey: "h-D6C2eKDZUGDOm7DA6GR8hvjg3DJySmPcNhKk34WyHl");
+            speechToText = new SpeechToTextService(authenticator);
+            speechToText.SetServiceUrl("https://api.eu-gb.speech-to-text.watson.cloud.ibm.com/instances/e6f88697-93d1-4618-b1c3-6bc54d8705d8");
+            speechToText.WithHeader("Transfer-Encoding", "chunked");
+
+            outputFIle = @"../../../Samples/sample" + x + ".wav";
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
@@ -52,27 +62,22 @@ namespace Inzynierka
 
         private void StartListenning_Click(object sender, RoutedEventArgs e)
         {
-            string outputFIle = @"../../../Samples/sample" + x + ".wav";
+            
             WasapiLoopbackCapture = new WasapiLoopbackCapture();
             WaveFileWriter = new WaveFileWriter(outputFIle, WasapiLoopbackCapture.WaveFormat);
 
-            IamAuthenticator authenticator = new IamAuthenticator(apikey: "h-D6C2eKDZUGDOm7DA6GR8hvjg3DJySmPcNhKk34WyHl");
-            SpeechToTextService speechToText = new SpeechToTextService(authenticator);
-            speechToText.SetServiceUrl("https://api.eu-gb.speech-to-text.watson.cloud.ibm.com/instances/e6f88697-93d1-4618-b1c3-6bc54d8705d8");
-            speechToText.WithHeader("Transfer-Encoding", "chunked");
-
             WasapiLoopbackCapture.DataAvailable += (s, a) =>
             {
+                WaveFileWriter.Write(a.Buffer, 0, a.BytesRecorded);
                 if (setSecondsBytes == false)
                 {
-                    perSecond = WasapiLoopbackCapture.WaveFormat.AverageBytesPerSecond * 3;
+                    perSecond = WasapiLoopbackCapture.WaveFormat.AverageBytesPerSecond * 2;
                 }
                 else
                 {
                     perSecond = perSecondFinal;
                 }
 
-                WaveFileWriter.Write(a.Buffer, 0, a.BytesRecorded);
 
                 if (WaveFileWriter.Position > perSecond)
                 {
@@ -91,7 +96,6 @@ namespace Inzynierka
                     {
                         TranscriptRecognition(@"../../../Samples/sample" + (x - 1) + ".wav", speechToText);
                     });
-
                 }
             };
 
@@ -128,13 +132,29 @@ namespace Inzynierka
             var result = JObject.Parse(detailedResponse.Response);
             if (result != null)
             {
-                return (string)result["results"][0]["alternatives"][0]["transcript"];
+                try
+                {
+                    return (string)result["results"][0]["alternatives"][0]["transcript"];
+                }
+                catch
+                {
+                    return " ";
+                }
+                
             }
             else
             {
                 WasapiLoopbackCapture.StopRecording();
+                WasapiLoopbackCapture.Dispose();
+                StartListenning.IsEnabled = true;
+                StopListening.IsEnabled = false;
                 return "";
             }       
+        }
+
+        private void Inactivity()
+        {
+
         }
 
         private void TranscriptRecognition(string file, SpeechToTextService speechToText)
@@ -156,11 +176,25 @@ namespace Inzynierka
                                 model: config.getLanguage(), //jaki język (-1) dla nieskończonosci
                                 smartFormatting: config.getSmartFormatting()
                             );
-                Dispatcher.Invoke(new Action(() => 
-                { 
-                    MainTextBox.Text += fromJSON(transcribe); 
-                }));
-
+                if (transcribe.StatusCode == 408)
+                {
+                    Inactivity();
+                }
+                else if(transcribe.StatusCode == 500)
+                {
+                    //internal server error
+                }
+                else if(transcribe.StatusCode == 503)
+                {
+                    //service unavailable
+                }
+                else if(transcribe.StatusCode == 200)
+                {
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        MainTextBox.Text += fromJSON(transcribe);
+                    }));
+                }
             }
             catch (ServiceResponseException e)
             {
@@ -178,6 +212,37 @@ namespace Inzynierka
             {
                 fileInfo.Delete();
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            deleteAllSamples();
+        }
+
+        private void MainTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(config.getTextMode() == 1)
+            {
+
+            }
+            else if(config.getTextMode() == 2)
+            {
+                MainTextBox.Text = resizeText(MainTextBox.Text, 250);
+            }
+        }
+
+        private string resizeText(string text, int size)
+        {
+            string sentence = text;
+            if (sentence.Length > size)
+            {
+                sentence = sentence.Substring(text.IndexOf(" ") + 1);
+            }
+            if (sentence.Length > size)
+            {
+                resizeText(sentence, size);
+            }
+            return sentence;
         }
     }
 }

@@ -17,16 +17,20 @@ namespace Inzynierka
         private Brush backgroundColor { get; set; }
         private int timeOut { get; set; }
         private bool smartFormatting { get; set; }
+        private int textMode { get; set; }
+        //1 = all text
+        //2 = part text
 
         private Config()
         {
-            language = "en-US_BroadbandModel";
+            language = ModelID.englishUS;
             fontSize = 15;
             fontStyle = FontStyles.Normal;
             fontColor = new SolidColorBrush(Color.FromRgb(0,0,0));
             backgroundColor = new SolidColorBrush(Color.FromRgb(255,255,255));
             timeOut = 30;
             smartFormatting = true;
+            textMode = 1;
         }
 
         private static Config config = new Config();
@@ -63,6 +67,10 @@ namespace Inzynierka
         {
             return smartFormatting;
         }
+        public int getTextMode()
+        {
+            return textMode;
+        }
         public void setLanguage(string _language)
         {
             language = _language;
@@ -90,6 +98,10 @@ namespace Inzynierka
         public void setSmartFormatting(bool _smartFormatting)
         {
             smartFormatting = _smartFormatting;
+        }
+        public void setTextMode(int _textMode)
+        {
+            textMode = _textMode;
         }
     }
 }

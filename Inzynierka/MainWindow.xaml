@@ -6,7 +6,8 @@
         xmlns:cp="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Inzynierka"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -19,7 +20,7 @@
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
         <TextBox Name="MainTextBox" BorderBrush="Black" IsEnabled="False" BorderThickness="2" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" 
-                 Margin="5" TextWrapping="Wrap">
+                 Margin="5" TextWrapping="Wrap" TextAlignment="Left" TextChanged="MainTextBox_TextChanged" VerticalScrollBarVisibility="Auto">
 
         </TextBox>
         <Button Name="Settings" Click="Settings_Click" Grid.Row="0" Grid.Column="2">
