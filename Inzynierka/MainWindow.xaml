@@ -6,42 +6,72 @@
         xmlns:cp="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Inzynierka"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="450" Width="800" MinWidth="400" MinHeight="300" MaxHeight="850" MaxWidth="1500"
         Closing="Window_Closing">
-    <Grid>
+    <Window.Resources>
+
+        <ControlTemplate TargetType="Button" x:Key="buttonStyle">
+            <Border Name="border" CornerRadius="5" BorderThickness="2" BorderBrush="Black" Background="Azure">
+                <Grid>
+                    <Rectangle Name="FocusCue" Visibility =" Hidden"
+                               Stroke ="Black" StrokeThickness ="3"
+                               StrokeDashArray ="1 2" StrokeDashCap="Round"
+                               SnapsToDevicePixels ="True"/>
+                    <ContentPresenter RecognizesAccessKey="True"
+                                      Margin="{TemplateBinding Padding}" />
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter TargetName="border" Property="Background" Value="Cyan"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter TargetName="border" Value="White" Property="Background"/>
+                    <Setter TargetName="border" Value="Lime" Property="BorderBrush"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter TargetName="border" Value="LightGray" Property="Background"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </Window.Resources>
+    <Grid Name="MainGrid" Background="SteelBlue">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
-        <TextBox Name="MainTextBox" BorderBrush="Black" IsEnabled="False" BorderThickness="2" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" 
-                 Margin="5" TextWrapping="Wrap" TextAlignment="Left" TextChanged="MainTextBox_TextChanged" VerticalScrollBarVisibility="Auto">
 
-        </TextBox>
-        <Button Name="Settings" Click="Settings_Click" Grid.Row="0" Grid.Column="2">
-            <Image Source="Pictures/settings.png">
+        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="7" BorderBrush="Black" BorderThickness="2" CornerRadius="10" Background="{Binding ElementName=MainTextBox, Mode=TwoWay, Path=Background}">
+            <TextBox Name="MainTextBox" Background="White" IsEnabled="True" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="4"
+                TextChanged="MainTextBox_TextChanged" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Margin="0">
+                <TextBox.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="8"/>
+                        <Setter Property="BorderBrush" Value="White"/>
+                    </Style>
+                </TextBox.Resources>
+            </TextBox>
+        </Border>
 
-            </Image>
+        
+        <Button Name="Settings" Click="Settings_Click" Grid.Row="2" Grid.Column="3" Margin="7" MinWidth="60" Template="{StaticResource buttonStyle}" HorizontalContentAlignment="Center">
+            <Image Source="Pictures/settings.png" Height="40"/>
         </Button>
-        <Button Name="StartListenning" Click="StartListenning_Click" Grid.Row="2" Grid.Column="0">
-            <Image Source="Pictures/microphone.png">
-
-            </Image>
+        <Button Name="StartListenning" Click="StartListenning_Click" Grid.Row="2" Grid.Column="0" Margin="7"  MinWidth="60" Template="{StaticResource buttonStyle}" HorizontalContentAlignment="Center">
+            <Image Source="Pictures/listen.png" Height="40"/>
         </Button>
-        <Button Name="StopListening" Click="StopListening_Click" Grid.Row="2" Grid.Column="1">
-            <Image Source="Pictures/stopRecording.png">
-
-            </Image>
+        <Button Name="StopListening" Click="StopListening_Click" Grid.Row="2" Grid.Column="1" Margin="7"  MinWidth="60" Template="{StaticResource buttonStyle}" HorizontalContentAlignment="Center">
+            <Image Source="Pictures/stopRecording.png" Height="40"/>
         </Button>
-        <Button Name="Reset" Click="Reset_Click" Grid.Row="2" Grid.Column="2">
-            <Image Source="Pictures/reset.png">
-
-            </Image>
+        <Button Name="Reset" Click="Reset_Click" Grid.Row="2" Grid.Column="2" Margin="7" MinWidth="60" Template="{StaticResource buttonStyle}" HorizontalContentAlignment="Center">
+            <Image Source="Pictures/reset.png" Height="40"/>
         </Button>
     </Grid>
 </Window>

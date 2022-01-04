@@ -193,7 +193,7 @@ namespace Inzynierka
                                 audio: memoryStream, //skąd
                                 contentType: "audio/wav", //jaki typ
                                 inactivityTimeout: config.getTimeOut(), //po jakim czasie wyłącza się 
-                                model: config.getLanguage(), //jaki język (-1) dla nieskończonosci
+                                model: config.getLanguage(), //jaki język 
                                 smartFormatting: config.getSmartFormatting()
                             );
                 if (transcribe.StatusCode == 408)
