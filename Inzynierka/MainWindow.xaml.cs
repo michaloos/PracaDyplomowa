@@ -154,7 +154,27 @@ namespace Inzynierka
 
         private void Inactivity()
         {
-
+            WasapiLoopbackCapture.StopRecording();
+            StartListenning.IsEnabled = true;
+            StopListening.IsEnabled = false;
+            deleteAllSamples();
+            MessageBoxResult boxResult = MessageBox.Show("Minął czas nieaktywności.");
+        }
+        private void InternalServerError()
+        {
+            WasapiLoopbackCapture.StopRecording();
+            StartListenning.IsEnabled = true;
+            StopListening.IsEnabled = false;
+            deleteAllSamples();
+            MessageBoxResult boxResult = MessageBox.Show("Wewnętrzny błąd serwera.");
+        }
+        private void ServiceUnavailable()
+        {
+            WasapiLoopbackCapture.StopRecording();
+            StartListenning.IsEnabled = true;
+            StopListening.IsEnabled = false;
+            deleteAllSamples();
+            MessageBoxResult boxResult = MessageBox.Show("Serwis tymczasowo niedostępny.");
         }
 
         private void TranscriptRecognition(string file, SpeechToTextService speechToText)
@@ -178,15 +198,19 @@ namespace Inzynierka
                             );
                 if (transcribe.StatusCode == 408)
                 {
+                    //inactivity
                     Inactivity();
                 }
                 else if(transcribe.StatusCode == 500)
                 {
                     //internal server error
+                    InternalServerError();
+                    
                 }
                 else if(transcribe.StatusCode == 503)
                 {
                     //service unavailable
+                    ServiceUnavailable();
                 }
                 else if(transcribe.StatusCode == 200)
                 {
@@ -207,11 +231,19 @@ namespace Inzynierka
 
         private void deleteAllSamples()
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo(@"../../../Samples/");
-            foreach(FileInfo fileInfo in directoryInfo.GetFiles())
+            try
             {
-                fileInfo.Delete();
+                DirectoryInfo directoryInfo = new DirectoryInfo(@"../../../Samples/");
+                foreach (FileInfo fileInfo in directoryInfo.GetFiles())
+                {
+                    fileInfo.Delete();
+                }
             }
+            catch (DirectoryNotFoundException e)
+            {
+
+            }
+            
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
