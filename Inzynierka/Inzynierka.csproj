@@ -46,8 +46,4 @@
     <Resource Include="Pictures\stopRecording.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Samples\" />
-  </ItemGroup>
-
 </Project>

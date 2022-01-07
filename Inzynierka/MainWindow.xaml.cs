@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,14 +28,9 @@ namespace Inzynierka
     public partial class MainWindow : Window
     {
         private Config config;
-        private WaveFileWriter WaveFileWriter = null;
         private WasapiLoopbackCapture WasapiLoopbackCapture = null;
-        private int x = 1;
-        public int perSecond = 0;
-        public int perSecondFinal = 0;
-        private bool setSecondsBytes = false;
         private SpeechToTextService speechToText;
-        private string outputFIle;
+        private int NoTimeOut = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -43,15 +39,12 @@ namespace Inzynierka
             MainTextBox.FontStyle = config.getFontStyle();
             MainTextBox.Foreground = config.getFontColor();
             MainTextBox.Background = config.getBackgroundColor();
-            deleteAllSamples();
             StopListening.IsEnabled = false;
 
             IamAuthenticator authenticator = new IamAuthenticator(apikey: "h-D6C2eKDZUGDOm7DA6GR8hvjg3DJySmPcNhKk34WyHl");
             speechToText = new SpeechToTextService(authenticator);
             speechToText.SetServiceUrl("https://api.eu-gb.speech-to-text.watson.cloud.ibm.com/instances/e6f88697-93d1-4618-b1c3-6bc54d8705d8");
-            speechToText.WithHeader("Transfer-Encoding", "chunked");
-
-            outputFIle = @"../../../Samples/sample" + x + ".wav";
+            //speechToText.WithHeader("Transfer-Encoding", "chunked");
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
@@ -62,53 +55,51 @@ namespace Inzynierka
 
         private void StartListenning_Click(object sender, RoutedEventArgs e)
         {
-            
+            Debug.WriteLine("start click");
             WasapiLoopbackCapture = new WasapiLoopbackCapture();
-            WaveFileWriter = new WaveFileWriter(outputFIle, WasapiLoopbackCapture.WaveFormat);
+
+            WasapiLoopbackCapture.StartRecording();
+            StartListenning.IsEnabled = false;
+            StopListening.IsEnabled = true;
+            
+            MemoryStream memoryStream = new MemoryStream();
 
             WasapiLoopbackCapture.DataAvailable += (s, a) =>
             {
-                WaveFileWriter.Write(a.Buffer, 0, a.BytesRecorded);
-                if (setSecondsBytes == false)
+                memoryStream.Write(a.Buffer, 0, a.BytesRecorded);
+
+                if (memoryStream.Position > WasapiLoopbackCapture.WaveFormat.AverageBytesPerSecond * 2)
                 {
-                    perSecond = WasapiLoopbackCapture.WaveFormat.AverageBytesPerSecond * 2;
-                }
-                else
-                {
-                    perSecond = perSecondFinal;
-                }
+                    MemoryStream stream = new MemoryStream();
+                    int memoryLenght = (int)(memoryStream.Length - 8);
+                    int numberOfSamples = (int)((memoryStream.Length - 58) / 8);
+                    int pureMemoryLenght = (int)(memoryStream.Length - 58);
+                    stream = WavHeader(memoryLenght, numberOfSamples, pureMemoryLenght, 384000, 32, 48000);
 
+                    memoryStream.WriteTo(stream);
 
-                if (WaveFileWriter.Position > perSecond)
-                {
-                    x++;
-                    if (setSecondsBytes == false)
-                    {
-                        perSecondFinal = perSecond;
-                        setSecondsBytes = true;
-                    }
-                    WaveFileWriter.Dispose();
-
-
-                    WaveFileWriter = new WaveFileWriter(@"../../../Samples/sample" + x + ".wav", this.WasapiLoopbackCapture.WaveFormat);
-
+                    Debug.WriteLine("BEFORE TASK RUN");
                     var task = Task.Run(() =>
                     {
-                        TranscriptRecognition(@"../../../Samples/sample" + (x - 1) + ".wav", speechToText);
+                        Debug.WriteLine("TASK RUN");
+                        TranscriptRecognition(stream, speechToText);
                     });
+                    memoryStream = new MemoryStream();
+                }
+
+                if(NoTimeOut == config.getTimeOut() / 2)
+                {
+                    WasapiLoopbackCapture.StopRecording();
+                    WasapiLoopbackCapture.Dispose();
+                    StartListenning.IsEnabled = true;
+                    StopListening.IsEnabled = false;
                 }
             };
 
             WasapiLoopbackCapture.RecordingStopped += (s, a) =>
             {
-                WaveFileWriter.Dispose();
-                WaveFileWriter = null;
                 WasapiLoopbackCapture.Dispose();
-            };
-
-            StartListenning.IsEnabled = false;
-            StopListening.IsEnabled = true;
-            WasapiLoopbackCapture.StartRecording();
+            };  
         }
 
         private void StopListening_Click(object sender, RoutedEventArgs e)
@@ -134,11 +125,26 @@ namespace Inzynierka
             {
                 try
                 {
-                    return (string)result["results"][0]["alternatives"][0]["transcript"];
+                    var text = (string?)result["results"][0]["alternatives"][0]["transcript"];
+                    var confidence = (double?)result["results"][0]["alternatives"][0]["confidence"];
+                    if (text != null && confidence >= 0.70)
+                    {
+                        NoTimeOut = 0;
+                        return text;
+                    }
+                    else if(text == null && confidence == null)
+                    {
+                        NoTimeOut++;
+                        return "";
+                    }
+                    else
+                    {
+                        return "";
+                    }
                 }
                 catch
                 {
-                    return " ";
+                    return "";
                 }
                 
             }
@@ -157,7 +163,6 @@ namespace Inzynierka
             WasapiLoopbackCapture.StopRecording();
             StartListenning.IsEnabled = true;
             StopListening.IsEnabled = false;
-            deleteAllSamples();
             MessageBoxResult boxResult = MessageBox.Show("Minął czas nieaktywności.");
         }
         private void InternalServerError()
@@ -165,7 +170,6 @@ namespace Inzynierka
             WasapiLoopbackCapture.StopRecording();
             StartListenning.IsEnabled = true;
             StopListening.IsEnabled = false;
-            deleteAllSamples();
             MessageBoxResult boxResult = MessageBox.Show("Wewnętrzny błąd serwera.");
         }
         private void ServiceUnavailable()
@@ -173,28 +177,24 @@ namespace Inzynierka
             WasapiLoopbackCapture.StopRecording();
             StartListenning.IsEnabled = true;
             StopListening.IsEnabled = false;
-            deleteAllSamples();
             MessageBoxResult boxResult = MessageBox.Show("Serwis tymczasowo niedostępny.");
         }
 
-        private void TranscriptRecognition(string file, SpeechToTextService speechToText)
+        private void TranscriptRecognition(MemoryStream stream, SpeechToTextService speechToText)
         {
+            //float backgroundAudioSuppres = 0.3F;
+            //float speechDetectorSens = float.Parse("0.4");
             try
-            {
-                MemoryStream memoryStream = new MemoryStream();
-                using (FileStream fileStream = File.OpenRead(file))
-                {
-                    memoryStream.SetLength(fileStream.Length);
-                    fileStream.Read(memoryStream.GetBuffer(), 0, (int)fileStream.Length);
-                }
-
-                File.Delete(file);
+            { 
                 var transcribe = speechToText.Recognize(
-                                audio: memoryStream, //skąd
+                                audio: stream, //skąd
                                 contentType: "audio/wav", //jaki typ
-                                inactivityTimeout: config.getTimeOut(), //po jakim czasie wyłącza się 
+                                //inactivityTimeout: config.getTimeOut(),
                                 model: config.getLanguage(), //jaki język 
                                 smartFormatting: config.getSmartFormatting()
+                                
+                            //backgroundAudioSuppression: backgroundAudioSuppres
+                                //speechDetectorSensitivity: speechDetectorSens
                             );
                 if (transcribe.StatusCode == 408)
                 {
@@ -217,6 +217,7 @@ namespace Inzynierka
                     Dispatcher.Invoke(new Action(() =>
                     {
                         MainTextBox.Text += fromJSON(transcribe);
+                        Debug.WriteLine(transcribe.Response);
                     }));
                 }
             }
@@ -227,28 +228,6 @@ namespace Inzynierka
                 StopListening.IsEnabled = false;
                 MessageBoxResult box = MessageBox.Show("Error: " + e.Message);
             }
-        }
-
-        private void deleteAllSamples()
-        {
-            try
-            {
-                DirectoryInfo directoryInfo = new DirectoryInfo(@"../../../Samples/");
-                foreach (FileInfo fileInfo in directoryInfo.GetFiles())
-                {
-                    fileInfo.Delete();
-                }
-            }
-            catch (DirectoryNotFoundException e)
-            {
-
-            }
-            
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            deleteAllSamples();
         }
 
         private void MainTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -275,6 +254,72 @@ namespace Inzynierka
                 resizeText(sentence, size);
             }
             return sentence;
+        }
+
+        /// <summary>
+        /// Tworzy memorystream z nagłówkiem odpowiadającym dla pliku .wav, do którego można potem dopisać "czyste" dane.
+        /// </summary>
+        /// <param name="memoryLenght">wielkość pliku od której należy odjąć 8</param>
+        /// <param name="numberOfSamples">ilość próbek, jest to wielkość bliku od której należy odjąć 58 oraz wynik ten podzielić przez 8</param>
+        /// <param name="pureMemoryLenght">wielkość pliku, bez nagłówka, czyli od wielkości pliku należy odjąć 58 gdyż tyle zamuje nagłówek</param>
+        /// <param name="bitsPerSec">ilość bitów na sekunde</param>
+        /// <param name="bitsPerSample">ilość bitów na próbkę</param>
+        /// <param name="samplePerSec">ilość próbek na sekundę</param>
+        /// <returns>memorystream z nagłówkiem do którego potem dołączane są "czyste" dane</returns>
+        private MemoryStream WavHeader(int memoryLenght, int numberOfSamples, int pureMemoryLenght, int bitsPerSec, int bitsPerSample, int samplePerSec)
+        {
+            MemoryStream memory = new MemoryStream();
+            memory.Position = 0;
+
+            //nagłówek RIFF
+            memory.Write(Encoding.ASCII.GetBytes("RIFF"), 0, 4);
+
+            //wielkość pliku - 8
+            memory.Write(BitConverter.GetBytes(memoryLenght), 0, 4);
+
+            //format WAVE
+            memory.Write(Encoding.ASCII.GetBytes("WAVE"), 0, 4);
+
+            //identyfikator fragmentu "fmt "
+            memory.Write(Encoding.ASCII.GetBytes("fmt "), 0, 4);
+
+            //chunk size 18
+            memory.Write(BitConverter.GetBytes(18), 0, 4);
+
+            //formatowanie kodu 3
+            memory.Write(BitConverter.GetBytes(3), 0, 2);
+
+            //ilość kanałów 2
+            memory.Write(BitConverter.GetBytes(2), 0, 2);
+
+            //ilość próbek na sekundę
+            memory.Write(BitConverter.GetBytes(samplePerSec), 0, 4);
+
+            //ilość bitów na sekundę
+            memory.Write(BitConverter.GetBytes(bitsPerSec), 0, 4);
+
+            //block allign
+            memory.Write(BitConverter.GetBytes(8), 0, 2);
+
+            //bity na próbkę
+            memory.Write(BitConverter.GetBytes(bitsPerSample), 0, 4);
+
+            //fact
+            memory.Write(Encoding.ASCII.GetBytes("fact"), 0, 4);
+
+            //rozmiar, min 4
+            memory.Write(BitConverter.GetBytes(4), 0, 4);
+
+            //ilość próbek
+            memory.Write(BitConverter.GetBytes(numberOfSamples), 0, 4);
+
+            //data (dane)
+            memory.Write(Encoding.ASCII.GetBytes("data"), 0, 4);
+
+            //ilość czystych danych, czyli bez nagłówka
+            memory.Write(BitConverter.GetBytes(pureMemoryLenght), 0, 4);
+
+            return memory;
         }
     }
 }

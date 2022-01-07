@@ -6,8 +6,7 @@
         xmlns:cp="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Inzynierka"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" MinWidth="400" MinHeight="300" MaxHeight="850" MaxWidth="1500"
-        Closing="Window_Closing">
+        Title="MainWindow" Height="450" Width="800" MinWidth="400" MinHeight="300" MaxHeight="850" MaxWidth="1500">
     <Window.Resources>
 
         <ControlTemplate TargetType="Button" x:Key="buttonStyle">
